@@ -1,0 +1,25 @@
+services:
+  mcast-proxy:
+    build:
+      context: ./mcast-proxy
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./mcast-proxy/smcroute.conf:/etc/smcroute.conf:ro
+    command: smcrouted -l debug -N -n -f /etc/smcroute.conf
+
+  mcast-client:
+    build:
+      context: ./mcast-client
+    networks:
+      isolated:
+        # ipv4_address: 172.28.0.10 # Uncomment to assign a static IP
+
+networks:
+  isolated:
+    driver: bridge
+    # Uncomment the following lines to specify a custom subnet
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
